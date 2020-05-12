@@ -27,11 +27,13 @@ loadArt =
 main :: IO ()
 main = do
   let loadVty = standardIOConfig >>= mkVty
+  initialVty                <- loadVty
   bChan                     <- newBChan 10
   art'                      <- loadArt
   timeMultiplier            <- newMVar 1
   (NE.fromList -> wordList) <- T.words <$> TIO.readFile "word-list.txt"
   withAsync (timer timeMultiplier bChan) . const . void $ customMain
+    initialVty
     loadVty
     (Just bChan)
     app
